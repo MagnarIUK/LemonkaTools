@@ -23,8 +23,24 @@ namespace LemonkaTools
                 await writer.WriteAsync(json);
             }
         }
+        public static async Task WriteTXT(string file_name, string data)
+        {
+            using (StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file_name), false))
+            {
+                await writer.WriteAsync(data);
+            }
+        }
+        public static void CreateErrorBox(string Message)
+        {
+            MessageBox.Show(Message, "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
 
-        private static void  OpenFolder(string Path)
+        public static void CreateInfoBox(string Message)
+        {
+            MessageBox.Show(Message, "Увага", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public static void  OpenFolder(string Path)
         {
             if (Directory.Exists(Path))
             {
@@ -37,7 +53,7 @@ namespace LemonkaTools
 
         }
 
-        private static void OpenLink(string url)
+        public static void OpenLink(string url)
         {
             Process.Start(new ProcessStartInfo(url));
         }
@@ -105,6 +121,7 @@ namespace LemonkaTools
                 return default;
             }
         }
+
 
         public static string AskDirectory()
         {

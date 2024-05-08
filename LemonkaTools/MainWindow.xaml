@@ -5,8 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LemonkaTools"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Lemonka Tools" Height="400" Width="200"
+        MinWidth="400" MinHeight="200"
+        MaxWidth="400" MaxHeight="200">
     <Grid>
+        <Label Content="Виберіть інструмент" HorizontalAlignment="Left" Margin="14,13,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="relise_creator_button" Content="Реліз генератор" HorizontalAlignment="Left" Margin="19,44,0,0" VerticalAlignment="Top" Click="relise_creator_button_Click"/>
+        <Button x:Name="clip_creator" Content="Кліпатор" HorizontalAlignment="Left" Margin="19,74,0,0" VerticalAlignment="Top" Click="clip_creator_Click"/>
+
+        <TextBlock x:Name="credits" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,0,0,5" TextWrapping="Wrap">
+            Зроблено <Hyperlink NavigateUri="https://linktr.ee/magnariuk" RequestNavigate="Hyperlink_RequestNavigate">MagnarIUK </Hyperlink> для <Hyperlink NavigateUri="https://t.me/KokojamboLVP" RequestNavigate="Hyperlink_RequestNavigate">Lemonka VP </Hyperlink> | <Hyperlink NavigateUri="https://github.com/MagnarIUK/" RequestNavigate="Hyperlink_RequestNavigate">GitHub</Hyperlink> | A-1.0.0
+        </TextBlock>
+        
+        
+        
 
     </Grid>
 </Window>
