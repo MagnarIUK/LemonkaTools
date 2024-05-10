@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Diagnostics;
 using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 namespace LemonkaTools
 {
     public partial class RelizeMaker : Window
@@ -43,12 +31,12 @@ namespace LemonkaTools
         {
             InitializeComponent();
             create_file_without_watermark.IsChecked = true;
-            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png")))
+            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png")))
             {
                 watermark_file_holder.Text = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png");
             }
 
-            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg", "bin", "ffmpeg.exe")))
+            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg", "bin", "ffmpeg.exe")))
             {
                 ffmpeg = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg", "bin", "ffmpeg.exe");
             }
@@ -102,36 +90,36 @@ namespace LemonkaTools
 
         private void choose_subtitles_file_button_Click(object sender, RoutedEventArgs e)
         {
-            subtitles_file_holder.Text=
+            subtitles_file_holder.Text =
             Tools.AskFile(sub_types);
         }
 
         private void choose_second_subtitles_file_button_Click(object sender, RoutedEventArgs e)
         {
-            second_subtitles_file_holder.Text=
+            second_subtitles_file_holder.Text =
             Tools.AskFile(sub_types);
         }
 
         private void choose_audio_file_button_Click(object sender, RoutedEventArgs e)
         {
-            audio_file_holder.Text=
+            audio_file_holder.Text =
             Tools.AskFile(audio_types);
         }
 
         private void choose_watermark_file_button_Click(object sender, RoutedEventArgs e)
         {
-            watermark_file_holder.Text=
+            watermark_file_holder.Text =
             Tools.AskFile(logo_types);
         }
 
         private void choose_result_folder_button_Click(object sender, RoutedEventArgs e)
         {
-            result_holder.Text=
+            result_holder.Text =
             Tools.AskDirectory();
         }
         private void open_result_folder_button_Click(object sender, RoutedEventArgs e)
         {
-            if(Directory.Exists(result_holder.Text)) 
+            if (Directory.Exists(result_holder.Text))
             {
                 Tools.OpenFolder(result_holder.Text);
             }
@@ -143,8 +131,8 @@ namespace LemonkaTools
 
         private void create_button_Click(object sender, RoutedEventArgs e)
         {
-            
-            if(File.Exists(video_file_holder.Text))
+
+            if (File.Exists(video_file_holder.Text))
             {
                 if (File.Exists(subtitles_file_holder.Text))
                 {
@@ -196,17 +184,17 @@ namespace LemonkaTools
                                         if (use_second_subtitles.IsChecked == true)
                                         {
                                             File.Copy(second_subtitles_file_holder.Text, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub1.ass"), true);
-                                            subs += ",ass=sub2.ass";
+                                            subs += ",ass=sub1.ass";
                                         }
 
-
+                                        Console.WriteLine(subs);
                                         output_st += subs;
                                         var sub_burning_process = new Process
                                         {
                                             StartInfo = new ProcessStartInfo
                                             {
                                                 FileName = ffmpeg,
-                                                Arguments = $"-i \"{video_file_holder.Text}\" -vf {subs}:fontsdir=fonts sub.mkv",
+                                                Arguments = $"-i \"{video_file_holder.Text}\" -vf \"{subs}:fontsdir=fonts\" sub.mkv",
                                                 RedirectStandardOutput = true,
                                                 StandardOutputEncoding = Encoding.UTF8,
                                                 UseShellExecute = false,
@@ -262,8 +250,31 @@ namespace LemonkaTools
 
                                         if (create_file_without_watermark.IsChecked == true)
                                         {
-                                            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "audio.mp4"),
-                                                System.IO.Path.Combine(result_holder.Text, System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text)+"_ww.mp4"));
+                                            /*File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "audio.mp4"),
+                                                System.IO.Path.Combine(result_holder.Text, System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text) + "_ww.mp4"));*/
+                                            var copy_process = new Process
+                                            {
+                                                StartInfo = new ProcessStartInfo
+                                                {
+                                                    FileName = ffmpeg,
+                                                    Arguments = $"-i \"audio.mp4\" -c:v libx264  -c:a copy \"shorts/in/{System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text)+" (Для нарізання).mp4"}\"",
+                                                    RedirectStandardOutput = true,
+                                                    StandardOutputEncoding = Encoding.UTF8,
+                                                    UseShellExecute = false,
+                                                    CreateNoWindow = false,
+                                                }
+                                            };
+                                            copy_process.OutputDataReceived += (sender, e) =>
+                                            {
+                                                if (!String.IsNullOrEmpty(e.Data))
+                                                {
+                                                    output_st += e.Data + Environment.NewLine;
+                                                }
+                                            };
+
+                                            copy_process.Start();
+                                            copy_process.WaitForExit();
+                                            output.Text += "Копійовано\n";
                                         }
 
 
@@ -280,7 +291,7 @@ namespace LemonkaTools
                                                 UseShellExecute = false,
                                                 CreateNoWindow = false,
                                             }
-                                            
+
                                         };
 
 
@@ -304,11 +315,11 @@ namespace LemonkaTools
 
 
                                         Tools.CreateInfoBox("Готово");
-                                        var writeLogTask = Task.Run(() => WriteToLogAsync($"log {DateTime.Today.Date}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt", output_st));
+                                        var writeLogTask = Task.Run(() => WriteToLogAsync($"log {DateTime.Now.Day}_{DateTime.Now.Month}_{DateTime.Now.Year}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt", output_st));
                                         writeLogTask.Wait();
 
                                         is_working = false;
-                                   }
+                                    }
                                     else
                                     {
                                         Tools.CreateErrorBox("Програма вже працює");
@@ -351,7 +362,7 @@ namespace LemonkaTools
 
         async Task WriteToLogAsync(string logFileName, string logContent)
         {
-           await Tools.WriteLOG(logFileName, logContent);
+            await Tools.WriteLOG(logFileName, logContent);
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

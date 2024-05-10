@@ -1,0 +1,35 @@
+﻿<Window x:Class="LemonkaTools.ClipsCreatop"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LemonkaTools"
+        mc:Ignorable="d"
+        Title="Lemonka Tools: Clips Creatop" Height="900" Width="1500"
+        MinWidth="1500" MinHeight="900">
+    <Grid>
+        <Border BorderBrush="Black" BorderThickness="2" HorizontalAlignment="Left" Height="525" Margin="525,24,0,0" VerticalAlignment="Top" Width="950">
+            <MediaElement x:Name="ANIME" LoadedBehavior="Manual" />
+        </Border>
+        <TextBox x:Name="clip_start_minutes" HorizontalAlignment="Left" Margin="850,703,0,0" TextWrapping="Wrap" Text="00" FontSize="30" VerticalAlignment="Top" Width="60" Height="43" PreviewTextInput="TextBox_PreviewTextInput" />
+        <TextBlock HorizontalAlignment="Left" Margin="845,653,0,0" TextWrapping="Wrap" Text="Початок кліпу" FontSize="30" VerticalAlignment="Top" Height="40" Width="200"/>
+        <TextBlock HorizontalAlignment="Left" Margin="925,703,0,0" TextWrapping="Wrap" Text=":" FontSize="30" VerticalAlignment="Top" Height="40" Width="20"/>
+        <TextBox x:Name="clip_start_seconds" HorizontalAlignment="Left" Margin="945,703,0,0" TextWrapping="Wrap" Text="00"  FontSize="30" VerticalAlignment="Top" Width="60" Height="43" PreviewTextInput="TextBox_PreviewTextInput" />
+        <Button x:Name="play_button" Content="Програти" FontSize="30" HorizontalAlignment="Left" Margin="530,554,0,0" VerticalAlignment="Top" Height="50" Width="140"/>
+        <Button x:Name="pause_button" Content="Зупинити" FontSize="30" HorizontalAlignment="Center" Margin="0,554,0,0" VerticalAlignment="Top" Height="50" Width="150"/>
+        <TextBox x:Name="clip_end_minutes" HorizontalAlignment="Left" Margin="1145,703,0,0" TextWrapping="Wrap" Text="00" FontSize="30" VerticalAlignment="Top" Width="60" Height="43" PreviewTextInput="TextBox_PreviewTextInput" />
+        <TextBlock HorizontalAlignment="Left" Margin="1140,653,0,0" TextWrapping="Wrap" FontSize="30" VerticalAlignment="Top" Height="40" Width="200"><Run Language="uk-ua" Text="Кінець кліпу"/></TextBlock>
+        <TextBlock HorizontalAlignment="Left" Margin="1220,703,0,0" TextWrapping="Wrap" Text=":" FontSize="30" VerticalAlignment="Top" Height="40" Width="20"/>
+        <TextBox x:Name="clip_end_seconds" HorizontalAlignment="Left" Margin="1240,703,0,0" TextWrapping="Wrap" Text="00"  FontSize="30" VerticalAlignment="Top" Width="60" Height="43" PreviewTextInput="TextBox_PreviewTextInput" />
+        <ComboBox x:Name="clips" HorizontalAlignment="Left" Margin="535,699,0,0" VerticalAlignment="Top" Width="230" Height="35"/>
+        <TextBlock HorizontalAlignment="Left" Margin="535,649,0,0" TextWrapping="Wrap" Text="Обрати кліп" FontSize="30" VerticalAlignment="Top" Height="40" Width="200"/>
+        <ComboBox x:Name="clips_Copy" HorizontalAlignment="Left" Margin="40,95,0,0" VerticalAlignment="Top" Width="435" Height="35"/>
+        <TextBlock HorizontalAlignment="Left" Margin="35,37,0,0" TextWrapping="Wrap" Text="Обрати джерело" FontSize="30" VerticalAlignment="Top" Height="40" Width="240"/>
+        <Button x:Name="import_button" Content="Імпортувати" FontSize="30" HorizontalAlignment="Left" Margin="280,39,0,0" VerticalAlignment="Top" Height="45" Width="195"/>
+        <Button x:Name="clip_button" Content="Створити кліпи" FontSize="30" HorizontalAlignment="Left" Margin="125,789,0,0" VerticalAlignment="Top" Height="45" Width="245"/>
+        <TextBlock x:Name="current_time" HorizontalAlignment="Left" Margin="865,564,0,0" TextWrapping="Wrap" Text="00:00:00" FontSize="30" VerticalAlignment="Top" Height="40" Width="240"/>
+        <Button x:Name="open_folder" Content="Перегланути кліпи" FontSize="30" HorizontalAlignment="Left" Margin="385,789,0,0" VerticalAlignment="Top" Height="45" Width="245"/>
+
+
+    </Grid>
+</Window>

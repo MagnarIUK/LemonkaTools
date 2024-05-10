@@ -47,7 +47,8 @@ namespace LemonkaTools
 
         private void clip_creator_Click(object sender, RoutedEventArgs e)
         {
-
+            ClipsCreatop clipsCreatop = new ClipsCreatop();
+            clipsCreatop.Show();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
