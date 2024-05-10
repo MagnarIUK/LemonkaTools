@@ -257,7 +257,7 @@ namespace LemonkaTools
                                                 StartInfo = new ProcessStartInfo
                                                 {
                                                     FileName = ffmpeg,
-                                                    Arguments = $"-i \"audio.mp4\" -c:v libx264  -c:a copy \"shorts/in/{System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text)+" (Для нарізання).mp4"}\"",
+                                                    Arguments = $"-i \"audio.mp4\" -i \"{watermark_file_holder.Text}\" -filter_complex \"[1]format=rgba,scale=w=326:h=490:force_original_aspect_ratio=decrease[logo];[0][logo]overlay=(W-w)/2:10:format=auto,format=yuv420p\" -c:a copy \"{System.IO.Path.Combine(result_holder.Text, System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text) + ".mp4")}\"",
                                                     RedirectStandardOutput = true,
                                                     StandardOutputEncoding = Encoding.UTF8,
                                                     UseShellExecute = false,
