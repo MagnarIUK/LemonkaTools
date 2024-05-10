@@ -27,13 +27,22 @@ namespace LemonkaTools
         public MainWindow()
         {
             InitializeComponent();
+
+            if (!Directory.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs")))
+            {
+                Directory.CreateDirectory(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs"));
+            }
+
             this.DataContext = new DataContextModel();
         }
 
         private void relise_creator_button_Click(object sender, RoutedEventArgs e)
         {
             RelizeMaker relizeMaker = new RelizeMaker();
-            relizeMaker.Show();
+            if (!relizeMaker.IsClosed)
+            {
+                relizeMaker.Show();
+            }
         }
 
         private void clip_creator_Click(object sender, RoutedEventArgs e)

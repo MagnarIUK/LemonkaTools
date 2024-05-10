@@ -81,7 +81,7 @@
             </TextBox.RenderTransform>
         </TextBox>
         <Label Content="Водяний знак" HorizontalAlignment="Left" Margin="25,138,0,0" VerticalAlignment="Top" Width="305" Grid.Row="1"/>
-        <Button x:Name="choose_result_folder_button" Content="Обрати файл" HorizontalAlignment="Left" Margin="335,270,0,0" VerticalAlignment="Top" Width="110" Click="choose_result_folder_button_Click" Grid.Row="1"/>
+        <Button x:Name="choose_result_folder_button" Content="Обрати папку" HorizontalAlignment="Left" Margin="335,270,0,0" VerticalAlignment="Top" Width="110" Click="choose_result_folder_button_Click" Grid.Row="1"/>
         <TextBox x:Name="result_holder" Margin="20,273,570,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Grid.Row="1">
             <TextBox.RenderTransform>
                 <TransformGroup>
@@ -93,8 +93,9 @@
             </TextBox.RenderTransform>
         </TextBox>
         <Label Content="Папка з результатом" HorizontalAlignment="Left" Margin="25,235,0,0" VerticalAlignment="Top" Width="305" Grid.Row="1"/>
-        <Button x:Name="create_button" Content="Створити" HorizontalAlignment="Left" Margin="160,360,0,0" VerticalAlignment="Top" Width="95" Grid.Row="1" Click="create_button_Click"/>
+        <Button x:Name="create_button" Content="Створити" HorizontalAlignment="Left" Margin="80,360,0,0" VerticalAlignment="Top" Width="95" Grid.Row="1" Click="create_button_Click"/>
         <CheckBox x:Name="create_file_without_watermark" Content="Створити файл без водяного знаку" HorizontalAlignment="Left" Margin="120,320,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <CheckBox x:Name="use_second_subtitles" Content="Використовувати" HorizontalAlignment="Left" Margin="332,169,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="use_second_subtitles" Content="Використовувати" HorizontalAlignment="Left" Margin="330,164,0,0" VerticalAlignment="Top" Height="25" Grid.RowSpan="2"/>
+        <Button x:Name="open_result_folder_button" Content="Відкрити папку з результатом" HorizontalAlignment="Left" Margin="185,360,0,0" VerticalAlignment="Top" Width="180" Click="open_result_folder_button_Click" Grid.Row="1"/>
     </Grid>
 </Window>

@@ -26,6 +26,19 @@ namespace LemonkaTools
         private bool is_working { get; set; } = false;
         string ffmpeg;
 
+        private bool _isClosed = false;
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            _isClosed = true;
+        }
+
+        public bool IsClosed
+        {
+            get { return _isClosed; }
+        }
+
         public RelizeMaker()
         {
             InitializeComponent();
@@ -35,9 +48,9 @@ namespace LemonkaTools
                 watermark_file_holder.Text = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logo.png");
             }
 
-            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg/bin/ffmpeg.exe")))
+            if(File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg", "bin", "ffmpeg.exe")))
             {
-                ffmpeg = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg/bin/ffmpeg.exe");
+                ffmpeg = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fmpeg", "bin", "ffmpeg.exe");
             }
             else
             {
@@ -51,7 +64,7 @@ namespace LemonkaTools
                 movie_types = config["file_types"]["movie"];
                 sub_types = config["file_types"]["sub"];
                 audio_types = config["file_types"]["audio"];
-                logo_types = config["file_types"]["audio"];
+                logo_types = config["file_types"]["logo"];
             }
             else
             {
@@ -116,7 +129,17 @@ namespace LemonkaTools
             result_holder.Text=
             Tools.AskDirectory();
         }
-
+        private void open_result_folder_button_Click(object sender, RoutedEventArgs e)
+        {
+            if(Directory.Exists(result_holder.Text)) 
+            {
+                Tools.OpenFolder(result_holder.Text);
+            }
+            else
+            {
+                Tools.CreateErrorBox("Не знайдено директорії з результатом");
+            }
+        }
 
         private void create_button_Click(object sender, RoutedEventArgs e)
         {
@@ -131,88 +154,171 @@ namespace LemonkaTools
                         {
                             if (Directory.Exists(result_holder.Text))
                             {
-                                if (!is_working)
+                                if (use_second_subtitles.IsChecked == true && File.Exists(second_subtitles_file_holder.Text) || use_second_subtitles.IsChecked == false)
                                 {
-                                    string output_st = "";
-                                    is_working = true;
-
-                                    File.Copy(subtitles_file_holder.Text, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub.ass"));
-
-                                    File.Copy(second_subtitles_file_holder.Text, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub1.ass"));
-
-                                    var clearing_process = new Process
+                                    if (!is_working)
                                     {
-                                        StartInfo = new ProcessStartInfo
+                                        string output_st = "";
+                                        is_working = true;
+
+
+                                        var clearing_process = new Process
                                         {
-                                            FileName = ffmpeg,
-                                            Arguments = $"-i \"{video_file_holder.Text}\" -c copy -an -sn clear.mkv",
-                                            RedirectStandardOutput = true,
-                                            StandardOutputEncoding = System.Text.Encoding.UTF8,
-                                            UseShellExecute = true,
-                                            CreateNoWindow = false,
-                                        },
-                                        EnableRaisingEvents = true
-                                    };
-                                    clearing_process.OutputDataReceived += (sender, e) =>
-                                    {
-                                        if (!string.IsNullOrEmpty(e.Data))
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = ffmpeg,
+                                                Arguments = $"-i \"{video_file_holder.Text}\" -c copy -an -sn clear.mkv",
+                                                RedirectStandardOutput = true,
+                                                StandardOutputEncoding = Encoding.UTF8,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = false,
+                                            }
+                                        };
+
+                                        clearing_process.OutputDataReceived += (sender, e) =>
                                         {
-                                            output_st += e.Data;
+                                            if (!String.IsNullOrEmpty(e.Data))
+                                            {
+                                                output_st += e.Data + Environment.NewLine;
+                                            }
+                                        };
+
+
+                                        clearing_process.Start();
+                                        Console.Write(output_st);
+                                        clearing_process.WaitForExit();
+                                        output.Text += "Відеофайл очищено\n";
+
+
+
+                                        File.Copy(subtitles_file_holder.Text, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub.ass"), true);
+                                        string subs = "ass=sub.ass";
+                                        if (use_second_subtitles.IsChecked == true)
+                                        {
+                                            File.Copy(second_subtitles_file_holder.Text, System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub1.ass"), true);
+                                            subs += ",ass=sub2.ass";
                                         }
-                                    };
 
 
-                                    clearing_process.Start();
-                                    clearing_process.WaitForExit();
-                                    output.Text += "Відеофайл очищено";
-
-                                    while (true)
-                                    {
-                                        if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "clear.mkv")))
+                                        output_st += subs;
+                                        var sub_burning_process = new Process
                                         {
-                                            break;
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = ffmpeg,
+                                                Arguments = $"-i \"{video_file_holder.Text}\" -vf {subs}:fontsdir=fonts sub.mkv",
+                                                RedirectStandardOutput = true,
+                                                StandardOutputEncoding = Encoding.UTF8,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = false,
+                                            },
+                                            EnableRaisingEvents = true
+                                        };
+
+                                        sub_burning_process.OutputDataReceived += (sender, e) =>
+                                        {
+                                            if (!String.IsNullOrEmpty(e.Data))
+                                            {
+                                                output_st += e.Data + Environment.NewLine;
+                                            }
+                                        };
+
+                                        sub_burning_process.Start();
+                                        Console.Write(output_st);
+                                        sub_burning_process.WaitForExit();
+                                        output.Text += "Субтитри вшито\n";
+                                        File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "clear.mkv"));
+
+
+
+                                        var audio_changing_process = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = ffmpeg,
+                                                Arguments = $"-i \"sub.mkv\" -i \"{audio_file_holder.Text}\" -c:v copy -map 0:v:0 -map 1:a:0 audio.mp4",
+                                                RedirectStandardOutput = true,
+                                                StandardOutputEncoding = Encoding.UTF8,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = false,
+                                            }
+                                        };
+                                        audio_changing_process.OutputDataReceived += (sender, e) =>
+                                        {
+                                            if (!String.IsNullOrEmpty(e.Data))
+                                            {
+                                                output_st += e.Data + Environment.NewLine;
+                                            }
+                                        };
+
+
+                                        audio_changing_process.Start();
+                                        Console.Write(output_st);
+                                        audio_changing_process.WaitForExit();
+                                        output.Text += "Аудіо змінено\n";
+                                        File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub.mkv"));
+
+
+
+                                        if (create_file_without_watermark.IsChecked == true)
+                                        {
+                                            File.Copy(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "audio.mp4"),
+                                                System.IO.Path.Combine(result_holder.Text, System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text)+"_ww.mp4"));
                                         }
+
+
+
+
+                                        var logo_burning_process = new Process
+                                        {
+                                            StartInfo = new ProcessStartInfo
+                                            {
+                                                FileName = ffmpeg,
+                                                Arguments = $"-i \"audio.mp4\" -i \"{watermark_file_holder.Text}\" -filter_complex \"[1]format=rgba,scale=w=326:h=490:force_original_aspect_ratio=decrease[logo];[0][logo]overlay=W-w-10:10:format=auto,format=yuv420p\" -c:a copy \"{System.IO.Path.Combine(result_holder.Text, System.IO.Path.GetFileNameWithoutExtension(video_file_holder.Text) + ".mp4")}\"",
+                                                RedirectStandardOutput = true,
+                                                StandardOutputEncoding = Encoding.UTF8,
+                                                UseShellExecute = false,
+                                                CreateNoWindow = false,
+                                            }
+                                            
+                                        };
+
+
+                                        logo_burning_process.OutputDataReceived += (sender, e) =>
+                                        {
+                                            if (!String.IsNullOrEmpty(e.Data))
+                                            {
+                                                output_st += e.Data + Environment.NewLine;
+                                            }
+                                        };
+
+                                        logo_burning_process.Start();
+                                        Console.Write(output_st);
+                                        logo_burning_process.WaitForExit();
+                                        output.Text += "Лого вшито!\n";
+                                        File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "audio.mp4"));
+                                        File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub.ass"));
+                                        if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub1.ass")))
+                                        { File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sub1.ass")); }
+
+
+
+                                        Tools.CreateInfoBox("Готово");
+                                        var writeLogTask = Task.Run(() => WriteToLogAsync($"log {DateTime.Today.Date}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt", output_st));
+                                        writeLogTask.Wait();
+
+                                        is_working = false;
+                                   }
+                                    else
+                                    {
+                                        Tools.CreateErrorBox("Програма вже працює");
                                     }
-
-                                    var sub_burning_process = new Process
-                                    {
-                                        StartInfo = new ProcessStartInfo
-                                        {
-                                            FileName = ffmpeg,
-                                            Arguments = $"-i \"clear.mkv\" -vf, f\"ass=\"",
-                                            RedirectStandardOutput = true,
-                                            StandardOutputEncoding = System.Text.Encoding.UTF8,
-                                            UseShellExecute = true,
-                                            CreateNoWindow = false,
-                                        },
-                                        EnableRaisingEvents = true
-                                    };
-                                    clearing_process.OutputDataReceived += (sender, e) =>
-                                    {
-                                        if (!string.IsNullOrEmpty(e.Data))
-                                        {
-                                            output_st += e.Data;
-                                        }
-                                    };
-
-
-
-
-                                    //Інші етапи
-
-
-
-
-
-
-
-
-                                    Task t = Tools.WriteTXT($"log {DateTime.Today.ToString()}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt", output_st);
                                 }
                                 else
                                 {
-                                    Tools.CreateErrorBox("Програма вже працює");
+                                    Tools.CreateErrorBox("Другі субтитри не знайдено!");
                                 }
+
 
                             }
                             else
@@ -241,6 +347,11 @@ namespace LemonkaTools
             }
 
 
+        }
+
+        async Task WriteToLogAsync(string logFileName, string logContent)
+        {
+           await Tools.WriteLOG(logFileName, logContent);
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

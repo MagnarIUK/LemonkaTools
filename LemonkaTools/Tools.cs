@@ -23,9 +23,9 @@ namespace LemonkaTools
                 await writer.WriteAsync(json);
             }
         }
-        public static async Task WriteTXT(string file_name, string data)
+        public static async Task WriteLOG(string file_name, string data)
         {
-            using (StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, file_name), false))
+            using (StreamWriter writer = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs",  file_name), false))
             {
                 await writer.WriteAsync(data);
             }
