@@ -244,7 +244,7 @@ namespace LemonkaTools
                                         output.Text += "MP4 готовий\n";
 
 
-
+                                        File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "out.mkv"));
                                         Tools.CreateInfoBox("Готово");
                                         var writeLogTask = Task.Run(() => WriteToLogAsync($"log {DateTime.Now.Day}_{DateTime.Now.Month}_{DateTime.Now.Year}_{DateTime.Now.Hour}_{DateTime.Now.Minute}_{DateTime.Now.Second}.txt", output_st));
                                         writeLogTask.Wait();

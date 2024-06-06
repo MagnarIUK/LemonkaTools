@@ -14,9 +14,7 @@ using System.Windows.Shapes;
 
 namespace LemonkaTools
 {
-    /// <summary>
-    /// Interaction logic for ClipsCreatop.xaml
-    /// </summary>
+
     public partial class ClipsCreatop : Window
     {
         public static bool exists { get; set; }
@@ -25,7 +23,8 @@ namespace LemonkaTools
             exists = true;
             InitializeComponent();
 
-            //ANIME.Source = new Uri()
+            ANIME.Source = new Uri("J:\\Squirrel\\LemonkaTools\\LemonkaTools\\bin\\Debug\\net8.0-windows\\shorts\\in\\Leadale no Daichi nite - S01EP04(ww).mp4");
+            ANIME.Play();
         }
 
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
